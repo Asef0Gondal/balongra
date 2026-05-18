@@ -1,0 +1,1619 @@
+[
+  {
+    "name": "Wiggle Fast",
+    "expression": "wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));",
+    "description": "Fast wiggle - 10 times per second, 50 pixels.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Wiggle Slow",
+    "expression": "wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));",
+    "description": "Slow wiggle - 2 times per second, 20 pixels.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Wiggle 1D (Only Y)",
+    "expression": "w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));\n[value[0], w[1]];",
+    "description": "Wiggles position but only up and down (Y axis).",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Wiggle 1D (Only X)",
+    "expression": "w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));\n[w[0], value[1]];",
+    "description": "Wiggles position but only left and right (X axis).",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Loop Out (Cycle)",
+    "expression": "loopOut('cycle');",
+    "description": "Loops animation continuously after the last keyframe.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Loop Out (Ping-Pong)",
+    "expression": "loopOut('pingpong');",
+    "description": "Bounces animation backwards and forwards continuously.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Loop Out (Offset)",
+    "expression": "loopOut('offset');",
+    "description": "Continues the animation moving forward infinitely.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Time Remap (Double Speed)",
+    "expression": "time * effect('Time Multiplier')('Slider');",
+    "description": "Plays the composition at 200% speed.",
+    "targetProperty": "Time Remap"
+  },
+  {
+    "name": "Posterize Time (Stop Motion)",
+    "expression": "posterizeTime(effect('Framerate')('Slider'));\nvalue;",
+    "description": "Forces the layer to playback at 12 fps for a stop-motion look.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Inertial Bounce (Keyframes)",
+    "expression": "var amp = .1;\nvar freq = effect('Freq')('Slider');\nvar decay = effect('Decay')('Slider');\nvar n = 0;\nif (numKeys > 0) {\n  n = nearestKey(time).index;\n  if (key(n).time > time) {\n    n--;\n  }\n}\nvar t = 0;\nif (n == 0) {\n  t = 0;\n} else {\n  t = time - key(n).time;\n}\nif (n > 0 && t < 1) {\n  var v = velocityAtTime(key(n).time - thisComp.frameDuration/10);\n  value + v*amp*Math.sin(freq*t*2*Math.PI)/Math.exp(decay*t);\n} else {\n  value;\n}",
+    "description": "Realistic exponential decay bounce based on keyframe velocity. Excellent for UI.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Elastic Scale (Keyframes)",
+    "expression": "var amp = .05;\nvar freq = effect('Freq')('Slider');\nvar decay = effect('Decay')('Slider');\nvar n = 0;\nif (numKeys > 0) {\n  n = nearestKey(time).index;\n  if (key(n).time > time) {\n    n--;\n  }\n}\nvar t = 0;\nif (n == 0) {\n  t = 0;\n} else {\n  t = time - key(n).time;\n}\nif (n > 0 && t < 1) {\n  var v = velocityAtTime(key(n).time - thisComp.frameDuration/10);\n  value + v*amp*Math.sin(freq*t*2*Math.PI)/Math.exp(decay*t);\n} else {\n  value;\n}",
+    "description": "Realistic elastic pop-in based on scale keyframe velocity. Excellent for App UI.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Elastic Pop-In (InPoint)",
+    "expression": "if (time < inPoint + 1) {\n  var t = time - inPoint;\n  var amp = effect('Amp')('Slider');\n  var freq = effect('Freq')('Slider');\n  var decay = effect('Decay')('Slider');\n  var v = 1 + amp * Math.sin(freq * t * 2 * Math.PI) / Math.exp(decay * t);\n  [value[0]*v, value[1]*v];\n} else {\n  value;\n}",
+    "description": "Automatically scales and bounces a layer precisely when it starts appearing.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Cursor Blink",
+    "expression": "var spd = effect('Spd')('Slider');\nMath.round(time * spd) % 2 === 0 ? 100 : 0;",
+    "description": "Creates a hard flashing opacity perfectly mimicking a typing text cursor.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Typewriter Text",
+    "expression": "var rate = effect('Rate')('Slider'); // characters per second\ntext.sourceText.substr(0, time * rate);",
+    "description": "Reveals text character by character based on time progression.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Counter (Commas & Decimals)",
+    "expression": "num = effect(\"Slider Control\")(\"Slider\");\nvar decimals = effect('Decimals')('Slider');\nfunction addCommas(x) {\n  return x.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, \",\");\n}\naddCommas(num.toFixed(decimals));",
+    "description": "Turns a slider into a beautifully formatted SaaS counter (e.g. $1,234.56). Needs Slider.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Count Up Timer (00:00)",
+    "expression": "var rate = effect('Rate')('Slider');\nvar clockStart = effect('Clock Start')('Slider');\nfunction padZero(n){ return (n < 10 ? \"0\" : \"\") + n; }\nclockTime = Math.max(clockStart + rate * (time - inPoint), 0);\nt = Math.floor(clockTime);\nmin = Math.floor(t / 60);\nsec = t % 60;\npadZero(min) + \":\" + padZero(sec);",
+    "description": "A perfect 00:00 count-up timer starting from the layer inPoint.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Count Down Timer (00:00)",
+    "expression": "duration = 60;\nfunction padZero(n){ return (n < 10 ? \"0\" : \"\") + n; }\nt = Math.max(duration - (time - inPoint), 0);\nmin = Math.floor(t / 60);\nsec = Math.floor(t % 60);\npadZero(min) + \":\" + padZero(sec);",
+    "description": "A perfect 1-minute countdown timer starting from the layer inPoint.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Binary Matrix Code",
+    "expression": "var rows = effect('Rows')('Slider'); var cols = effect('Cols')('Slider');\nstr = \"\";\nfor(i=0; i<rows; i++){\n  for(j=0; j<cols; j++){\n    str += Math.round(random(effect(\"Rand Max\")(\"Slider\"))) + \" \";\n  }\n  str += \"\\r\";\n}\nstr;",
+    "description": "Generates a grid of random 0s and 1s that change every frame.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Hexadecimal Glitch",
+    "expression": "chars = \"0123456789ABCDEF\";\nvar len = effect('Len')('Slider');\nstr = \"\";\nposterizeTime(effect('Framerate')('Slider'));\nfor(i=0; i<len; i++){\n  str += chars[Math.floor(random(effect(\"Rand Max\")(\"Slider\")))];\n}\nstr;",
+    "description": "Generates a rapidly changing string of hacker-style hexadecimal letters.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Random Tech Word Cycle",
+    "expression": "words = [\"Cyber\", \"SaaS\", \"Cloud\", \"Data\", \"AI\", \"Startup\", \"Node\", \"System\"];\nposterizeTime(effect('Framerate')('Slider'));\nwords[Math.floor(random(words.length))];",
+    "description": "Cycles repeatedly through tech buzzwords every half second.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Tech Glitch Opacity",
+    "expression": "var freq = effect('Freq')('Slider');\nvar chance = effect('Chance')('Slider');\nif (random(effect(\"Rand Max\")(\"Slider\")) < chance) {\n  random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));\n} else {\n  value;\n}",
+    "description": "Randomly flickers opacity based on a chance percentage. Great for broken tech.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Tech Glitch Position",
+    "expression": "var freq = effect('Freq')('Slider');\nvar amp = effect('Amp')('Slider');\nif (random(effect(\"Rand Max\")(\"Slider\")) > 0.8) {\n  wiggle(freq, amp);\n} else {\n  value;\n}",
+    "description": "Violently snaps position around for short, randomized bursts.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Glitch XYZ Separate",
+    "expression": "seedRandom(index, true);\n[wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'))[0], value[1]];",
+    "description": "Glitches only the X value rapidly, creating a digital tearing effect.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Auto-Scroll (UI Parallax)",
+    "expression": "var speed = effect('Speed')('Slider');\n[value[0], value[1] + (time * speed)];",
+    "description": "Endlessly scrolls a layer vertically based on time.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Constant Rotation",
+    "expression": "var speed = effect('Speed')('Slider');\ntime * speed;",
+    "description": "Endlessly rotates a layer at a continuous speed.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Continuous Drift",
+    "expression": "var x_speed = effect('X speed')('Slider');\nvar y_speed = effect('Y speed')('Slider');\n[value[0] + time * x_speed, value[1] + time * y_speed];",
+    "description": "Drifts the layer smoothly across the screen diagonally forever.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Look At (Target tracking)",
+    "expression": "target = thisComp.layer(\"Target\");\np1 = target.transform.position;\np2 = transform.position;\nvar delta = [p1[0] - p2[0], p1[1] - p2[1]];\nMath.atan2(delta[1], delta[0]) * 180 / Math.PI + 90;",
+    "description": "Rotates current layer to always stare exactly at a layer named 'Target'.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Magnetic Proximity Scale",
+    "expression": "target = thisComp.layer(\"Cursor\");\nvar maxDist = effect('Max Dist')('Slider');\nvar maxScale = effect('Max Scale')('Slider');\ndist = length(target.transform.position, transform.position);\nif (dist < maxDist) {\n  ease(dist, 0, maxDist, [maxScale, maxScale], value);\n} else {\n  value;\n}",
+    "description": "Scales up when a layer named 'Cursor' comes close. macOS dock effect.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Distance Based Opacity (Fade near)",
+    "expression": "target = thisComp.layer(\"Cursor\");\ndist = length(target.transform.position, transform.position);\nease(dist, 0, 200, 0, 100);",
+    "description": "Fades the layer away when the cursor layer approaches.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Index Stagger Falloff",
+    "expression": "var delay = effect('Delay')('Slider');\nt = time - (index * delay);\nvalueAtTime(t);",
+    "description": "Delays the animation identically down the layer stack depending on layer index.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "3D Flip Stagger (Rotation X)",
+    "expression": "var delay = effect('Delay')('Slider');\nt = time - (index * delay);\neaseOut(t, 0, 1, 90, 0);",
+    "description": "Peels open layers sequentially by flipping them 90 degrees in 3D space.",
+    "targetProperty": "Rotation X"
+  },
+  {
+    "name": "Follow Leader with Delay",
+    "expression": "var delay = effect('Delay')('Slider');\nif (index > 1) {\n  leader = thisComp.layer(index - 1);\n  leader.transform.position.valueAtTime(time - delay);\n} else { value; }",
+    "description": "Endlessly chases the position of the layer immediately above it.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Mouse Cursor Follow (Heavy Delay)",
+    "expression": "var delay = effect('Delay')('Slider');\nthisComp.layer(\"Cursor\").transform.position.valueAtTime(time - delay);",
+    "description": "Follows a 'Cursor' layer with a sluggish, smoothed delay.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Ripple Effect (Index Delay Scale)",
+    "expression": "var delay = effect('Delay')('Slider');\nt = time - (index * delay);\ns = ease(t, 0, 1, 0, 100);\n[s,s];",
+    "description": "Pops layers up dynamically in an explosive chain reaction.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Circular Orbit",
+    "expression": "center = [960, 540];\nvar radius = effect('Radius')('Slider');\nvar speed = effect('Speed')('Slider');\nangle = time * speed;\nrads = degreesToRadians(angle);\nx = center[0] + Math.cos(rads) * radius;\ny = center[1] + Math.sin(rads) * radius;\n[x, y];",
+    "description": "Endlessly orbits in a perfect circle using sine and cosine math.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Spiral Orbit",
+    "expression": "center = [960, 540];\nradius = time * effect('Time Multiplier')('Slider');\nvar speed = effect('Speed')('Slider');\nangle = time * speed;\nrads = degreesToRadians(angle);\nx = center[0] + Math.cos(rads) * radius;\ny = center[1] + Math.sin(rads) * radius;\n[x, y];",
+    "description": "Spirals aggressively outward from the center point over time.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Pendulum Swing",
+    "expression": "var amp = effect('Amp')('Slider');\nvar freq = effect('Freq')('Slider');\namp * Math.sin(time * freq * Math.PI * 2);",
+    "description": "Swings back and forth endlessly like a perfectly smooth pendulum.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Sine Wave Float",
+    "expression": "var amp = effect('Amp')('Slider');\nvar freq = effect('Freq')('Slider');\nyOffset = Math.sin(time * freq) * amp;\n[value[0], value[1] + yOffset];",
+    "description": "Gently floats a layer up and down forever using sine wave mathematics.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Float On Water (X & Y)",
+    "expression": "x = time * effect('Time Multiplier')('Slider');\ny = Math.sin(time * effect('Time Multiplier')('Slider')) * 15;\n[value[0] + x, value[1] + y];",
+    "description": "Moves horizontally while bobbing up and down mimicking a boat.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Clamp Values to Screen",
+    "expression": "x = clamp(value[0], 0, 1920);\ny = clamp(value[1], 0, 1080);\n[x, y];",
+    "description": "Forces a layer to never be dragged outside a 1920x1080 screen limit.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Clamp to Edges (No Bounce)",
+    "expression": "x = value[0]; y = value[1];\nif (x < 0) x = -x;\nif (x > 1920) x = 1920 - (x - 1920);\nif (y < 0) y = -y;\nif (y > 1080) y = 1080 - (y - 1080);\n[x, y];",
+    "description": "Clamps position coordinates to stay within a 1920x1080 screen limit without true bouncing physics.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Color Flash Loop",
+    "expression": "var spd = effect('Spd')('Slider');\ncolor1 = [1, 0, 0, 1];\ncolor2 = [0, 0, 1, 1];\nif (Math.round(time * spd) % 2 == 0) { color1; } else { color2; }",
+    "description": "Harshly snaps back and forth between two defined colors.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Random Hue Cycle",
+    "expression": "posterizeTime(effect('Framerate')('Slider'));\n[random(effect(\"Rand Max\")(\"Slider\")), random(effect(\"Rand Max\")(\"Slider\")), random(effect(\"Rand Max\")(\"Slider\")), 1];",
+    "description": "Chooses a completely random RGB color every 5 frames.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Smooth Rainbow Cycle",
+    "expression": "var spd = effect('Spd')('Slider');\nh = (time * spd) % 1;\nfunction hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}\nvar sat = effect('Sat')('Slider'); var lum = effect('Lum')('Slider');\nvar q2 = lum < 0.5 ? lum*(1+sat) : lum+sat-lum*sat;\nvar p2 = 2*lum - q2;\n[hue2rgb(p2,q2,h+1/3), hue2rgb(p2,q2,h), hue2rgb(p2,q2,h-1/3), 1];",
+    "description": "Gently slides through the entire color wheel consistently.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Auto-Fade In/Out (15 frames)",
+    "expression": "fadeFrames = 15;\nfadeTime = fadeFrames * thisComp.frameDuration;\nMath.min(ease(time, inPoint, inPoint + fadeTime, 0, 100), ease(time, outPoint - fadeTime, outPoint, 100, 0));",
+    "description": "Automatically dissolves layer in at the start and out at the end.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Bounce on Marker (Scale)",
+    "expression": "var amp = effect('Amp')('Slider'); var freq = effect('Freq')('Slider'); var decay = effect('Decay')('Slider'); var n = 0;\nif (marker.numKeys > 0) {\n  n = marker.nearestKey(time).index;\n  if (marker.key(n).time > time) n--;\n}\nif (n > 0) {\n  var t = time - marker.key(n).time;\n  var s = Math.sin(freq * t * Math.PI * 2) / Math.exp(decay * t);\n  [value[0] + amp * s, value[1] + amp * s];\n} else { value; }",
+    "description": "Triggers an exponential bounce scale every time it hits a layer marker.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Wiggle on Marker (Position)",
+    "expression": "w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));\nif(marker.numKeys > 0){\n  m = marker.nearestKey(time);\n  t = Math.abs(time - m.time);\n  if (t < 0.5) { ease(t, 0, 0.5, w, value); } else { value; }\n} else { value; }\n",
+    "description": "Briefly triggers an earthquake wiggle when encountering a marker.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Maintain Stroke Width",
+    "expression": "value / length(toComp([0,0]), toComp([0.7071,0.7071])) || 0.001;",
+    "description": "Add to Stroke Width to keep it pixel-perfect even when scaling layer.",
+    "targetProperty": "Stroke Width"
+  },
+  {
+    "name": "Camera Shake (Handheld)",
+    "expression": "var f = effect('Wiggle Freq')('Slider');\nvar a = effect('Wiggle Amp')('Slider');\nwiggle(f, a * 0.7) + wiggle(f * 0.4, a * 0.4, 1, 0.5, time + 17.3) - value;",
+    "description": "Layers two independent wiggles for a hyper-realistic organic handheld camera drift.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Snap to Grid",
+    "expression": "var gridSize = effect('Grid Size')('Slider');\nx = Math.round(value[0] / gridSize) * gridSize;\ny = Math.round(value[1] / gridSize) * gridSize;\n[x, y];",
+    "description": "Forces position to lock onto an invisible 50-pixel grid layout.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Heartbeat / Pulse",
+    "expression": "var pulseSpeed = effect('Pulse Speed')('Slider');\nvar amp = effect('Amp')('Slider');\ns = value[0] + amp * Math.sin(time * pulseSpeed * Math.PI * 2);\n[s, s];",
+    "description": "Throbs continuously like a pounding heart.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Loading Spinner (Steps)",
+    "expression": "var steps = effect('Steps')('Slider');\nvar rpm = effect('Rpm')('Slider');\nMath.floor(time * (rpm/60) * steps) * (360/steps);",
+    "description": "Snaps rotation into a 8-step loading circle playback.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Jiggle Scale (Nervous)",
+    "expression": "w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));\n[w[0], w[0]];",
+    "description": "Creates extreme anxiety and shivering through chaotic uniform scale changes.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Floating Hologram",
+    "expression": "Math.abs(Math.sin(time * effect('Time Multiplier')('Slider'))) * 50 + 50;",
+    "description": "Generates a ghostly pulsing opacity curve perfect for sci-fi UI.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Dynamic Text Box (Size)",
+    "expression": "s = thisComp.layer(\"Text\");\nw = s.sourceRectAtTime().width;\nh = s.sourceRectAtTime().height;\n[w + 40, h + 40];",
+    "description": "For shape layers. Scales exactly to width/height of a layer named 'Text'.",
+    "targetProperty": "Size"
+  },
+  {
+    "name": "Dynamic Text Box (Position)",
+    "expression": "s = thisComp.layer(\"Text\");\nw = s.sourceRectAtTime().width/2;\nh = s.sourceRectAtTime().height/2;\nl = s.sourceRectAtTime().left;\nt = s.sourceRectAtTime().top;\n[l+w, t+h];",
+    "description": "For shape layers. Positions accurately behind 'Text' respecting descenders.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Squash and Stretch (Velocity)",
+    "expression": "var maxDev = effect('Max Dev')('Slider');\nvar spd = effect('Spd')('Slider');\nv = length(velocity);\ns = ease(v, 0, 1000, 0, maxDev);\n[value[0] - s, value[1] + s];",
+    "description": "Deforms shape based on how fast it moves imitating real physics.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Flickering Neon Sign",
+    "expression": "wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')) > 50 ? 100 : 20;",
+    "description": "Brutal broken electrical flickering tube light effect.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Data Viz: Bar Chart Height",
+    "expression": "s = effect(\"Slider Control\")(\"Slider\");\n[value[0], s];",
+    "description": "Links shape Y-scale specifically to a slider to build bar charts.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Text Auto-Kerning / Tracking",
+    "expression": "var amp = effect('Amp')('Slider');\nvar freq = effect('Freq')('Slider');\nvalue + amp * Math.sin(time * freq * Math.PI * 2);",
+    "description": "Breathes character tracking continuously in and out.",
+    "targetProperty": "Tracking Amount"
+  },
+  {
+    "name": "Random Position Jump",
+    "expression": "var fps = effect('Fps')('Slider');\nposterizeTime(fps);\nrandom([0,0], [1920, 1080]);",
+    "description": "Teleports instantly to a random screen coordinate 5 times a second.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Velocity Based Rotation",
+    "expression": "v = velocity[0];\nease(v, -1000, 1000, -45, 45);",
+    "description": "Tilts the layer automatically matching the direction it is moving in.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "3D Position Extrusion Stagger",
+    "expression": "[value[0] - index, value[1] - index];",
+    "description": "Perfect for faked 3D stacks, precisely offsets by 1 pixel diagonally per layout order.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Audio Amplitude Scale",
+    "expression": "audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\");\ns = ease(audio, 0, 50, 100, 150);\n[s,s];",
+    "description": "Breathes to the beat of an Audio Amplitude keyframe layer.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Smooth Sine Opacity",
+    "expression": "var minOp = effect('Min Op')('Slider');\nvar maxOp = effect('Max Op')('Slider');\nvar freq = effect('Freq')('Slider');\namp = (maxOp - minOp) / 2;\nmid = minOp + amp;\nmid + amp * Math.sin(time * freq * Math.PI * 2);",
+    "description": "Throbs gently back and forth between two defined opacities.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Rotate to Velocity Vector",
+    "expression": "if (speed > 0) {\n  v = velocity;\n  Math.atan2(v[1], v[0]) * 180 / Math.PI;\n} else { value; }",
+    "description": "Aims the layer forward along the exact path it travels.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Sine Wave Stroke Dash Offset",
+    "expression": "time * effect('Time Multiplier')('Slider');",
+    "description": "Endlessly scrolls a dashed stroke forward.",
+    "targetProperty": "Dash Offset"
+  },
+  {
+    "name": "Jittery Rotation",
+    "expression": "posterizeTime(effect('Framerate')('Slider'));\nwiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));",
+    "description": "Stop-motion harsh shaky rotation movement.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Wiggle Opacity Only On Marker",
+    "expression": "if (marker.numKeys > 0) {\n  m = marker.nearestKey(time);\n  t = time - m.time;\n  if (t > 0 && t < 1) { wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); } else { value; }\n} else { value; }",
+    "description": "Only stutters opacity for precisely 1 second after passing a marker.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Random Hex Color",
+    "expression": "posterizeTime(effect('Framerate')('Slider'));\nx = random(0xffffff);\nh = Math.floor(x).toString(16);\n\"#\" + (\"000000\" + h).slice(-6);",
+    "description": "Randomly changes HEX code string (For text layers).",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Smooth Dampened Position",
+    "expression": "var delay = effect('Delay')('Slider');\nvar target = thisComp.layer(\"Target\");\nvar pt = target.transform.position.valueAtTime(time - delay);\n[pt[0], pt[1]];",
+    "description": "Lags far behind a target object, useful for smooth camera rigs.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Sine Wave Text Jumper",
+    "expression": "var delay = effect('Delay')('Slider');\nvar freq = effect('Freq')('Slider');\nvar amp = effect('Amp')('Slider');\ny = Math.sin((time - textIndex * delay) * freq) * amp;\n[value[0], value[1] + y];",
+    "description": "Use on a Text Animator position. Makes characters jump in a wave.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Blinking Console Line",
+    "expression": "var blinkSpeed = effect('Blink Speed')('Slider');\nMath.floor(time * blinkSpeed) % 2 == 0 ? \"_\" : \" \";",
+    "description": "Recreates a blinking terminal underscore _",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Overshoot Text Animator (Scale)",
+    "expression": "var delay = .05;\nvar freq = effect('Freq')('Slider');\nvar decay = effect('Decay')('Slider');\nvar amp = effect('Amp')('Slider');\n\nvar t = (time - inPoint) - textIndex * delay;\nif (t > 0) {\n  var v = amp * Math.sin(freq * t * 2 * Math.PI) / Math.exp(decay * t);\n  [v + value[0], v + value[1]];\n} else {\n  value;\n}",
+    "description": "Incredible bouncy overshoot specifically for text animator scale property.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Counter with Leading Zeros",
+    "expression": "num = effect(\"Slider Control\")(\"Slider\");\nvar len = effect('Len')('Slider');\nnum = Math.floor(num).toString();\nwhile(num.length < len) num = \"0\" + num;\nnum;",
+    "description": "Formats a number to always have leading zeros (e.g. 0004, 0521).",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Time To Frames (UI)",
+    "expression": "timeToFrames(t = time + thisComp.displayStartTime, fps = 1.0 / thisComp.frameDuration, isDuration = false);",
+    "description": "Displays exactly what frame number the timeline is currently on.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Maintain Scale (Ignore Parent)",
+    "expression": "s = [];\nps = parent.transform.scale;\nfor (i = 0; i < ps.length; i++){\n  s[i] = value[i] * 100 / ps[i];\n}\ns;",
+    "description": "Fixes aspect ratio crushing. Keeps the layer at 100% scale even if its parent is scaled.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Maintain Rotation (Ignore Parent)",
+    "expression": "-parent.transform.rotation;",
+    "description": "Keeps the layer completely level and upright even if its parent layer rotates.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Auto Grid Layout (Position)",
+    "expression": "var cols = effect('Cols')('Slider');\nvar spacing = effect('Spacing')('Slider');\ni = index - 1; // assumes layers start at top\nrow = Math.floor(i / cols);\ncol = i % cols;\n[col * spacing + value[0], row * spacing + value[1]];",
+    "description": "Instantly arranges layers into a perfect structural grid based on their index.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Snap Rotation (Isometric/Stepped)",
+    "expression": "var step = effect('Step')('Slider');\nMath.round(value/step)*step;",
+    "description": "Forces the rotation to only snap to harsh 45 degree angle increments.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Comp Name as Text",
+    "expression": "thisComp.name;",
+    "description": "Automatically changes the text to precisely match the composition name.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Layer Name as Text",
+    "expression": "thisLayer.name;",
+    "description": "Automatically changes the text to match the layer's name.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Path Point Null Follower",
+    "expression": "pts = thisComp.layer(\"Path\").content(\"Shape 1\").content(\"Path 1\").path.points();\npts[0]; // Change 0 to target different points",
+    "description": "Links a layer to a specific vertex point of a shape layer path.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Advanced Wiggle (Slider Controlled)",
+    "expression": "freq = effect(\"Wiggle Freq\")(\"Slider\");\namp = effect(\"Wiggle Amp\")(\"Slider\");\nwiggle(freq, amp);",
+    "description": "A wiggle where speed and intensity are perfectly controlled by two sliders.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "True 3D Cylinder Extrusion (Index Math)",
+    "expression": "var radius = effect('Radius')('Slider');\nvar numLayers = effect('Num Layers')('Slider');\nangle = (index / numLayers) * Math.PI * 2;\nx = Math.cos(angle) * radius;\nz = Math.sin(angle) * radius;\n[x, value[1], z];",
+    "description": "Place on 3D layer Position. Automatically arranges layers into a perfect 3D cylinder based on total duplicates.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Infinite 3D Tunnel Generation",
+    "expression": "var spacing = effect('Spacing')('Slider');\nvar speed = effect('Speed')('Slider');\nz = (index * spacing) - (time * speed);\nif (z < -1000) z += (thisComp.numLayers * spacing);\n[value[0], value[1], z];",
+    "description": "Place on 3D layer Position. Creates a never-ending \"Star Wars\" hyperspace or tunnel effect recursively recycling layers.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Fluid Physics Dynamics (Spring)",
+    "expression": "var mass = effect('Mass')('Slider');\nvar stiffness = effect('Stiffness')('Slider');\nvar damping = effect('Damping')('Slider');\ntarget = thisComp.layer(\"Target\").transform.position;\npos = value;\nvel = [value[0] - valueAtTime(time - thisComp.frameDuration)[0], value[1] - valueAtTime(time - thisComp.frameDuration)[1]];\nforce = [(target[0] - pos[0]) * stiffness, (target[1] - pos[1]) * stiffness];\nacc = [force[0] / mass, force[1] / mass];\nvel = [vel[0] + (acc[0] * thisComp.frameDuration), vel[1] + (acc[1] * thisComp.frameDuration)];\nvel = [vel[0] * (1 - damping), vel[1] * (1 - damping)];\npos = [pos[0] + vel[0], pos[1] + vel[1]];\npos;",
+    "description": "An insanely complex, raw physics engine simulation of a spring pushing/pulling a layer towards a Target.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "True 3D Fake Extrusion (Position)",
+    "expression": "depth = index * 2; // pixel depth per copy\nx = depth * Math.cos(degreesToRadians(thisComp.layer(\"Control\").transform.rotation));\ny = depth * Math.sin(degreesToRadians(thisComp.layer(\"Control\").transform.rotation));\n[value[0] + x, value[1] + y];",
+    "description": "Duplicate the layer 50 times. It builds a flawless faked 3D block extrusion mimicking Element 3D.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "True 3D Fake Extrusion (Brightness Dropoff)",
+    "expression": "var falloff = effect('Falloff')('Slider'); // Darkness intensity per layer slice\nvalue - (index * falloff);",
+    "description": "Apply to Brightness. Perfectly shades the previous faked 3D extrusion so it looks perfectly lit from the front.",
+    "targetProperty": "Brightness"
+  },
+  {
+    "name": "Golden Ratio Spiral Generator",
+    "expression": "phi = (1 + Math.sqrt(5)) / 2;\nangle = time * effect('Time Multiplier')('Slider');\nradius = Math.pow(phi, angle / 90) * 10;\nx = Math.cos(degreesToRadians(angle)) * radius;\ny = Math.sin(degreesToRadians(angle)) * radius;\n[value[0] + x, value[1] + y];",
+    "description": "Mathematically generates a flawless, expanding Fibonacci 'Golden Ratio' spiral in world space.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "3D Null Camera Rig: Tripod Auto-Pan",
+    "expression": "try {\n  var target = thisComp.layer(\"Subject\").transform.position;\n  lookAt(toWorld([0,0,0]), target);\n} catch(e) { value; }",
+    "description": "Place on a 3D Null (Parented to Camera). Instantly forces the camera to track the subject flawlessly like a robotic tripod.",
+    "targetProperty": "Orientation"
+  },
+  {
+    "name": "Flock of Birds (Swarm AI)",
+    "expression": "seedRandom(index, true);\nleader = thisComp.layer(\"Leader\");\nseparation = random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));\nalignment = random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));\nlag = random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));\nleaderPos = leader.transform.position.valueAtTime(time - lag);\n[leaderPos[0] + Math.sin(time * alignment + index) * separation, leaderPos[1] + Math.cos(time * alignment + index) * separation];",
+    "description": "Recreates artificial intelligence 'Boid' swarming behavior. Layers dynamically swarm a leader naturally.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Procedural Rolling Wheel/Gear",
+    "expression": "var diam = effect('Diam')('Slider');\ncirc = diam * Math.PI;\ndist = transform.position[0];\ndist / circ * 360;",
+    "description": "Automatically rotates a wheel precisely matched to how far it travels across the X axis. No slipping.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Squash & Stretch (True Volume Preservation)",
+    "expression": "s = effect(\"Stretch Amount\")(\"Slider\");\nv_x = 100 + s;\nv_y = 10000 / v_x;\n[v_x, v_y];",
+    "description": "Mathematically preserves the exact pixel volume of a 2D layer during squashing so it behaves like real matter.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Fractal Noise to Y-Displacement (Pseudo 3D Terrain)",
+    "expression": "targetLayer = thisComp.layer(\"Fractal Map\");\nsamplePoint = transform.position;\nluminance = targetLayer.sampleImage(samplePoint, [1,1])[0];\nvar heightMod = effect('Height Mod')('Slider');\n[value[0], value[1] - (luminance * heightMod)];",
+    "description": "Holy Grail script! Reads the black/white pixels of another layer and physically displaces Y position to create 3D terrain.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Rubber Hose Curve Math",
+    "expression": "p1 = thisComp.layer(\"Start\").transform.position;\np2 = thisComp.layer(\"End\").transform.position;\nmid = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];\nbend = effect(\"Bend\")(\"Slider\");\nangle = Math.atan2(p2[1]-p1[1], p2[0]-p1[0]);\noffset = [Math.sin(angle) * bend, -Math.cos(angle) * bend];\n[mid[0] + offset[0], mid[1] + offset[1]];",
+    "description": "Generates the complex bezier vertex math for creating a functional 2-point IK rubber hose leg/arm.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Responsive Text Layout (Comp Width)",
+    "expression": "var margins = effect('Margins')('Slider');\nmaxW = thisComp.width - (margins * 2);\nrect = sourceRectAtTime();\nscaleFactor = maxW / rect.width;\nif (scaleFactor < 1) { [value[0]*scaleFactor, value[1]*scaleFactor]; } else { value; }",
+    "description": "Auto-shrinks text scale so it never exceeds the composition width. Perfect for automated MOGRTs.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Distance Between Layers (Proximity Blur)",
+    "expression": "L1 = thisComp.layer(\"Target\");\nL2 = thisLayer;\nd = length(L1.transform.position, L2.transform.position);\nease(d, 0, 500, 0, 50);",
+    "description": "Links blur (or any other effect) directly to how close two layers are to each other physically.",
+    "targetProperty": "Blurriness"
+  },
+  {
+    "name": "Physics-Based Gravity Bounce",
+    "expression": "e = .7;\nvar g = effect('G')('Slider');\nvar nMax = effect('N Max')('Slider');\nvar n = effect('N')('Slider');\nif (numKeys > 0){n = nearestKey(time).index;if (key(n).time > time) n--;}\nif (n > 0){\nt = time - key(n).time;\nv = -velocityAtTime(key(n).time - .001)*e;\nvy = v[1];\nvar j = effect('J')('Slider');\nwhile (j < nMax && t > 2*vy/g){\nt -= 2*vy/g;\nvy *= e;\nj++;\n}\n[value[0] + v[0]*time, value[1] + vy*t - .5*g*t*t];\n}else value;",
+    "description": "Insane physics calculation that makes a layer drop and bounce accurately under true 9.8m/s gravity.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Convert Spaces to Line Breaks",
+    "expression": "text.sourceText.replace(/ /g, \"\\r\");",
+    "description": "Instantly turns every space in a sentence into a hard carriage return. Great for stacking vertical text.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Show Layer Count",
+    "expression": "\"Layers in Comp: \" + thisComp.numLayers;",
+    "description": "Displays exactly how many layers are actively in the current composition.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Digital Timer (HH:MM:SS)",
+    "expression": "function padZero(n){ return (n < 10 ? \"0\" : \"\") + n; }\nvar timeStart = effect('Time Start')('Slider');\nt = Math.max(timeStart + time, 0);\nhours = Math.floor(t / 3600);\nmins = Math.floor((t % 3600) / 60);\nsecs = Math.floor(t % 60);\npadZero(hours) + \":\" + padZero(mins) + \":\" + padZero(secs);",
+    "description": "A flawless, running HH:MM:SS timer that counts up precisely based on timeline seconds.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Layer Visibility Based on Day of Week",
+    "expression": "d = new Date();\nday = d.getDay();\n// 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat\n(day == 1 || day == 3) ? 100 : 0;",
+    "description": "Changes opacity based on the ACTUAL real-world day of the week your computer clock says it is.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Text Scramble Reveal Automation",
+    "expression": "chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&\";\nstr = \"\";\nrevealed = Math.floor(ease(time, inPoint, inPoint+2, 0, value.length));\nfor(i=0; i<value.length; i++){\nif(i < revealed) str += value[i];\nelse str += chars[Math.floor(random(chars.length))];\n}\nstr;",
+    "description": "Sci-Fi text reveal. Random hacker characters scramble endlessly until they lock into the actual typed text.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Single Corner Radius Rectangle",
+    "expression": "r = effect(\"Radius\")(\"Slider\");\ns = size;\n[s[0]/2 - r, s[1]/2 - r];",
+    "description": "Use on a Shape Layer path. Allows you to perfectly round a single corner of a rectangle via sliders.",
+    "targetProperty": "Size"
+  },
+  {
+    "name": "Procedural Sine Wave Line",
+    "expression": "var amp = effect('Amp')('Slider');\nvar freq = effect('Freq')('Slider');\npts = [];\nfor(i=0; i<=100; i++){\n  x = i * 19.2;\n  y = Math.sin((x + time * effect('Time Multiplier')('Slider')) * freq/100) * amp;\n  pts.push([x,y]);\n}\ncreatePath(pts, [], [], false);",
+    "description": "Put on a Shape Layer Path. Mathematically draws a perfectly smooth, endless, undulating sine wave line.",
+    "targetProperty": "Path"
+  },
+  {
+    "name": "Display Current Date",
+    "expression": "d = new Date();\nmonths = [\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"];\nmonths[d.getMonth()] + \" \" + d.getDate() + \", \" + d.getFullYear();",
+    "description": "Pulls your computer's live local date and prints it (e.g. Feb 22, 2026).",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "2D to 3D Null Tracker",
+    "expression": "thisComp.layer(\"3D Layer Name\").toComp([0,0,0]);",
+    "description": "Attach a 2D layer's position perfectly to a 3D Null object's position in 3D space.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Marker Duration Auto-Fade",
+    "expression": "fadeFrames = 6; m = 0; t=time;\nif(marker.numKeys > 0) {\n  m = marker.nearestKey(time).index;\n  tag = marker.key(m).comment;\n  if(tag == 'Fade'){\n    tMin = marker.key(m).time; tMax = tMin + marker.key(m).duration;\n    if(t < tMin) { linear(time, tMin - framesToTime(fadeFrames), tMin, 0, value); }\n    else { linear(time, tMax - framesToTime(fadeFrames), tMax, value, 0); }\n  } else { value; }\n} else {value}",
+    "description": "Fades a layer in/out specifically based on the duration of a layer marker named 'Fade'.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Center Anchor Point Y-Axis",
+    "expression": "var r = sourceRectAtTime(time);\n[value[0], r.top + r.height / 2];",
+    "description": "Forces the anchor point of a text layer to always remain perfectly vertically centered.",
+    "targetProperty": "Anchor Point"
+  },
+  {
+    "name": "Delay Keyframes via Slider",
+    "expression": "delay = effect(\"Delay Seconds\")(\"Slider\");\nvalueAtTime(time-delay);",
+    "description": "Delays the animation keyframes dynamically via a slider control, no layer shifting needed.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Dropdown Menu Switcher",
+    "expression": "select = effect(\"Dropdown\")(\"Menu\");\n(select == parseInt(thisLayer.name[0])) ? value : 0;",
+    "description": "Prefix your layer name with a number (e.g., '1_Layer'). Links visibility to a Dropdown.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Ignore Parent Scale (Recursive)",
+    "expression": "L = thisLayer; s = transform.scale.value;\nwhile (L.hasParent){ L = L.parent; for (i = 0; i < s.length; i++) s[i] *= 100/L.transform.scale.value[i] }\ns",
+    "description": "Bulletproof script that prevents scaling distortion even if the parent layer has its own parent scaled.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Invert Opacity (Chameleon)",
+    "expression": "t = thisComp.layer(\"Opposite Layer\").transform.opacity;\nlinear(t,0,value,100,0);",
+    "description": "Fades *out* precisely when the target layer fades *in*.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Global Loop (In and Out)",
+    "expression": "loopIn() + loopOut() - value;",
+    "description": "Miracles loop! Loops keyframes infinitely both forwards AND backwards in time.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Seamless Looping Wiggle",
+    "expression": "f = 2; a = 40; var loopTime = effect('Loop Time')('Slider');\nt = time % loopTime;\nw1 = wiggle(f, a, 1, 0.5, t);\nw2 = wiggle(f, a, 1, 0.5, t - loopTime);\nlinear(t, 0, loopTime, w1, w2);",
+    "description": "Creates a totally random wiggle that secretly loops perfectly every 3 seconds.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Stop-Motion Wiggle",
+    "expression": "f = 6; a = 20;\nposterizeTime(f); wiggle(f, a);",
+    "description": "Combines Posterize Time with Wiggle for a choppy, stylized stop-motion shake.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Wiggle Between Strict Limits",
+    "expression": "var min = effect('Min')('Slider'); var max = effect('Max')('Slider'); var freq = effect('Freq')('Slider');\namp = Math.abs(max-min)/2;\noffset = (max+min)/2;\nwiggle(freq, amp) + offset;",
+    "description": "Centers a wiggle between min and max values. Adjust min, max, and freq to taste.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Magnetic Z-Push (3D Proximity Hover)",
+    "expression": "var nullObj = thisComp.layer(\"Control\");\nvar pos1 = nullObj.toWorld(nullObj.anchorPoint);\nvar pos2 = toWorld(anchorPoint);\n\n// Calculate distance based on X and Y only\nvar dist = length([pos1[0], pos1[1]], [pos2[0], pos2[1]]);\n\n// Controls\nvar maxDist = effect('Max Dist')('Slider'); // Radius of the magnetic effect\nvar minDist = effect('Min Dist')('Slider');   // Epicenter\nvar zPush = effect('ZPush')('Slider');  // Z-axis displacement (negative is closer to camera)\n\nvar zOffset = ease(dist, minDist, maxDist, zPush, 0);\n[value[0], value[1], value[2] + zOffset];",
+    "description": "Pushes layers towards the camera (Z-axis) dynamically as a 'Control' layer approaches them.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "SaaS Revenue Counter ($)",
+    "expression": "num = \"$\"+ effect(\"Slider Control\")(\"Slider\").value.toFixed(0);\n\nfunction addCommas(x) {\n    return x.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, \",\");\n}\n\naddCommas(num)",
+    "description": "Turns a slider directly into a rounded Dollar amount with commas (e.g. $1,200).",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Global Lighting Angle Override",
+    "expression": "var globalLightAngle = thisComp.layer(\"Null 1\").effect(\"Angle Control\")(\"Angle\");\nvar rotationCompensation = thisLayer.transform.rotation;\nglobalLightAngle - rotationCompensation",
+    "description": "Useful on Drop Shadows. Overrides layer rotation so the shadow always faces down globally.",
+    "targetProperty": "Light Angle"
+  },
+  {
+    "name": "Aggressive Overshoot Bounce",
+    "expression": "var amp = effect('Amp')('Slider');\nvar freq = effect('Freq')('Slider');\nvar decay = effect('Decay')('Slider');\nvar n = 0;\nif (numKeys > 0){\nn = nearestKey(time).index;\nif (key(n).time > time){ n--; }\n}\nvar t = 0;\nif (n == 0){ t = 0;\n}else{ t = time - key(n).time; }\nif (n > 0 && t < 1){\nvar v = velocityAtTime(key(n).time - thisComp.frameDuration/10);\nvar b = Math.sin(freq*t*2*Math.PI)/Math.exp(decay*t);\n[value[0] + v[0]*amp*b, value[1] + v[1]*amp*b];\n}else{value}",
+    "description": "A highly-tuned, snappy overshoot bounce with high frequency and fast decay. Perfect for UI pop-ins.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Auto Box Size (Layer Above)",
+    "expression": "var s = thisComp.layer(index-1);\nvar w = s.sourceRectAtTime().width;\nvar h = s.sourceRectAtTime().height;\nvar padding = effect('Padding')('Slider');\n[w + padding, h + padding];",
+    "description": "Shape layer size automatically scales exactly to the size of the text layer immediately above it, plus padding.",
+    "targetProperty": "Size"
+  },
+  {
+    "name": "Path Percentage Tracker",
+    "expression": "var shapeLayer = thisComp.layer(\"Shape Layer 1\");\nvar myPath = shapeLayer.content(\"Path 1\").path;\nvar percentage = effect(\"Slider Control\")(\"Slider\") / 100;\nvar pt = myPath.pointOnPath(percentage);\n\nshapeLayer.toComp(pt);",
+    "description": "Links a layer's position precisely to a percentage along a Shape Layer's continuous path.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Camera Frustum Culling (Auto-Hide)",
+    "expression": "if (thisComp.activeCamera) {\n  var cam = thisComp.activeCamera;\n  var p = cam.toComp(anchorPoint);\n  if (p[0] < 0 || p[0] > thisComp.width || p[1] < 0 || p[1] > thisComp.height) { 0; } else { value; }\n} else { value; }",
+    "description": "Drastically improves render time. Auto-hides 3D layers when they leave the camera's field of view.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Isolate X Position",
+    "expression": "[value[0], transform.position[1]];",
+    "description": "Takes only the X animated value from this property, keeping Y frozen at the layer's actual position.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Isolate Y Position",
+    "expression": "[transform.position[0], value[1]];",
+    "description": "Takes only the Y animated value from this property, keeping X frozen at the layer's actual position.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Typewriter with Blinking Cursor",
+    "expression": "var speed = effect('Speed')('Slider');\nvar cursor = \"|\";\nvar blink = Math.round(time * effect('Time Multiplier')('Slider')) % 2 == 0 ? cursor : \"\";\nvar val = text.sourceText.substr(0, time * speed);\nif (time * speed < text.sourceText.length) { val + blink; } else { val + cursor; }",
+    "description": "A classic typewriter reveal that automatically appends a blinking | cursor at the end.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Pendulum Swing (Decaying)",
+    "expression": "var freq = effect('Freq')('Slider'); var amp = effect('Amp')('Slider'); var decay = effect('Decay')('Slider'); var t = time - inPoint; if (t > 0) { value + (amp * Math.sin(freq * t * 2 * Math.PI) / Math.exp(decay * t)); } else { value; }",
+    "description": "Creates a physically accurate decaying pendulum swing. Perfect for Rotation properties.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Pendulum Swing (Infinite)",
+    "expression": "var freq = effect('Freq')('Slider'); var amp = effect('Amp')('Slider'); value + (Math.sin(time * freq * 2 * Math.PI) * amp);",
+    "description": "A constant back-and-forth pendulum swing that never slows down.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Random Binary String Generator",
+    "expression": "var len = effect(\"Length\")(\"Slider\"); var str = \"\"; for (var i = 0; i < len; i++) { str += Math.round(random(effect(\"Rand Max\")(\"Slider\"))).toString(); } str;",
+    "description": "Generates a random string of 1s and 0s every frame. Needs a slider named 'Length'.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Hexadecimal Glitch Matrix",
+    "expression": "var chars = \"0123456789ABCDEF\"; var len = effect('Len')('Slider'); var str = \"\"; for (var i=0; i<len; i++) { str += chars[Math.floor(random(effect(\"Rand Max\")(\"Slider\")))]; } str;",
+    "description": "Creates a fast-scrolling line of random Hex code for hacker/matrix UI effects.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Grid Value Snapping",
+    "expression": "var gridSize = effect(\"Grid Size\")(\"Slider\"); [Math.round(value[0]/gridSize)*gridSize, Math.round(value[1]/gridSize)*gridSize];",
+    "description": "Forces a layer to perfectly snap to an invisible pixel grid (e.g., retro 8-bit movement).",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Proportional Scale (Fit to Comp)",
+    "expression": "var w = thisLayer.sourceRectAtTime().width; var scaleFactor = thisComp.width / w; [value[0] * scaleFactor, value[1] * scaleFactor];",
+    "description": "Auto-scales any layer so its width perfectly matches the composition width.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Maintain Line Thickness (Strokes)",
+    "expression": "var s = transform.scale[0]; value / (s/100);",
+    "description": "Strips the parent scaling effect off a shape layer stroke, keeping it pixel-perfect no matter how much you scale.",
+    "targetProperty": "Stroke Width"
+  },
+  {
+    "name": "Auto-Scroll Loop (Vertical)",
+    "expression": "var speed = effect('Speed')('Slider'); var h = sourceRectAtTime().height; var y = value[1] - (time * speed); [value[0], y % h];",
+    "description": "A seamless vertical scrolling ticker. Ensure the layer is exactly repeatable.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Auto-Scroll Loop (Horizontal)",
+    "expression": "var speed = effect('Speed')('Slider'); var w = sourceRectAtTime().width; var x = value[0] - (time * speed); [x % w, value[1]];",
+    "description": "A seamless horizontal scrolling crawler ticker.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Time Offset by Layer Index",
+    "expression": "var delay = effect('Delay')('Slider'); valueAtTime(time - (index * delay));",
+    "description": "The ultimate stagger! Place on properties. Copies the layer above but delays it by 0.1s. Duplicate away!",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Index Based Opacity Fade",
+    "expression": "var step = effect('Step')('Slider'); Math.max(0, value - (index * step));",
+    "description": "Diminishing returns. Each duplicated layer becomes 10% more transparent than the last.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Circular Array Distribution",
+    "expression": "var radius = effect('Radius')('Slider'); var numLayers = thisComp.numLayers; var angle = (index / numLayers) * Math.PI * 2; [value[0] + Math.cos(angle)*radius, value[1] + Math.sin(angle)*radius];",
+    "description": "Spreads all layers in the composition into a perfect circle automatically.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Oscillating Scale (Breathing)",
+    "expression": "var freq = effect('Freq')('Slider'); var amp = effect('Amp')('Slider'); var s = Math.sin(time * freq * Math.PI * 2) * amp; [value[0] + s, value[1] + s];",
+    "description": "A smooth, organic 'breathing' scale effect that loops perfectly.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Wiggle Only X Axis",
+    "expression": "var w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); [w[0], value[1]];",
+    "description": "Wiggles the layer horizontally, keeping the vertical height completely locked.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Wiggle Only Y Axis",
+    "expression": "var w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); [value[0], w[1]];",
+    "description": "Wiggles the layer vertically, keeping the horizontal alignment locked.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Smooth Audio React (Scale)",
+    "expression": "var audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\"); var multiplier = effect('Multiplier')('Slider'); var base = value; var a = audio * multiplier; [base[0] + a, base[1] + a];",
+    "description": "Clean audio reacting! Links scale to Audio Amplitude keyframes.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Flicker (Random Opacity Cuts)",
+    "expression": "var prob = effect('Prob')('Slider'); random(effect(\"Rand Max\")(\"Slider\")) < prob ? 0 : value;",
+    "description": "Creates a harsh, broken fluorescent light bulb flicker.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Sine Wave Alpha Pulse",
+    "expression": "var freq = effect('Freq')('Slider'); var min = effect('Min')('Slider'); var max = effect('Max')('Slider'); var t = Math.sin(time * freq * 2 * Math.PI); ease(t, -1, 1, min, max);",
+    "description": "Pulsates opacity smoothly between two minimum and maximum limits.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Wiggle Position (Integer Only)",
+    "expression": "var w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); [Math.round(w[0]), Math.round(w[1])];",
+    "description": "A wiggle that refuses to fall on sub-pixels. Perfect for preserving crisp edges on pixel art.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Random Rotation Jumps",
+    "expression": "var fps = effect('Fps')('Slider'); var t = Math.floor(time * fps); seedRandom(t, true); random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));",
+    "description": "Snaps to a completely random rotation every 1/12th of a second. Stop-motion feel.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Squiggly Text (Sub-pixel Jitter)",
+    "expression": "var freq = effect('Freq')('Slider'); var amp = effect('Amp')('Slider'); wiggle(freq, amp);",
+    "description": "Apply to Text Position Animator. Creates the 'Boiling/Squiggly' cel-animation text effect.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Trail Follower (Worm Engine)",
+    "expression": "var delay = effect('Delay')('Slider'); thisComp.layer(index - 1).transform.position.valueAtTime(time - delay);",
+    "description": "Creates a snake/worm. This layer follows the exact path of the layer above it, delayed slightly.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Auto-Z Depth by Index",
+    "expression": "var gap = effect('Gap')('Slider'); [value[0], value[1], index * gap];",
+    "description": "Automatically pushes the layer backwards in 3D space based on its layer number.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Text Auto-Fit to Box (Height/Width constraints)",
+    "expression": "var maxWidth = effect('Max Width')('Slider'); var maxHeight = effect('Max Height')('Slider'); var b = sourceRectAtTime(); var sw = maxWidth / b.width; var sh = maxHeight / b.height; var s = Math.min(sw, sh); s < 1 ? [value[0]*s, value[1]*s] : value;",
+    "description": "Scales text down so it NEVER breaks outside of a specific pixel bounding box, preserving aspect.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Dynamic Shadow Offset",
+    "expression": "[-transform.position[0]/10, -transform.position[1]/10];",
+    "description": "Link to Drop Shadow Offset. As the layer moves around the comp, the shadow dynamically shifts as if there is a central light source.",
+    "targetProperty": "Drop Shadow Offset"
+  },
+  {
+    "name": "Dynamic Shadow Angle",
+    "expression": "var center = [thisComp.width/2, thisComp.height/2]; var p = transform.position; Math.atan2(p[1]-center[1], p[0]-center[0]) * 180 / Math.PI + 180;",
+    "description": "Link to Drop Shadow Angle. Shadow always points away from the center of the composition.",
+    "targetProperty": "Drop Shadow Angle"
+  },
+  {
+    "name": "Layer Collision Avoidance (Push Away)",
+    "expression": "var av = thisComp.layer(\"Repulser\"); var p1 = av.transform.position; var p2 = transform.position; var d = length(p1, p2); var radius = effect('Radius')('Slider'); if (d < radius && d > 0) { var dir = normalize(sub(p2, p1)); var push = radius - d; add(p2, mul(dir, push)); } else { value; }",
+    "description": "Creates a magnetic force field. If 'Repulser' gets too close, this layer shifts out of the way.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Bounce Back from Edges",
+    "expression": "var w = sourceRectAtTime().width/2; var h = sourceRectAtTime().height/2; var p = value; [clamp(p[0], w, thisComp.width-w), clamp(p[1], h, thisComp.height-h)];",
+    "description": "Creates a hard glass box. The layer literally cannot be dragged or animated off the screen.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Heartbeat Pulse",
+    "expression": "var bpm = effect('Bpm')('Slider'); var f = bpm / 60; var p = Math.pow(Math.sin(time * f * Math.PI), 10); var amp = effect('Amp')('Slider'); [value[0] + p*amp, value[1] + p*amp];",
+    "description": "A specialized math scale algorithm that accurately simulates a human heartbeat thud.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Number Slider with Suffix",
+    "expression": "var val = effect(\"Slider Control\")(\"Slider\"); Math.round(val) + \"%\";",
+    "description": "Turns a slider into a percentage (e.g. 99%). Change the % to 'kr' or 'px' as needed.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Digital Clock (AM/PM)",
+    "expression": "var d = new Date(); var h = d.getHours(); var m = d.getMinutes(); var ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12; h = h ? h : 12; m = m < 10 ? '0'+m : m; h + ':' + m + ' ' + ampm;",
+    "description": "Reads system time and displays a flawless 12-hour AM/PM real-world clock.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Color Hex Display",
+    "expression": "var c = thisComp.layer(\"Control\").effect(\"Color Control\")(\"Color\"); function toHex(n){ var h = Math.round(n * 255).toString(16); return h.length==1 ? \"0\"+h : h; } \"#\" + toHex(c[0]) + toHex(c[1]) + toHex(c[2]);",
+    "description": "Reads a Color Control effect and displays its exact Hex # code as text.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "RGB Split (Red Channel)",
+    "expression": "[value[0], 0, 0, 1];",
+    "description": "Apply to Color or Fill. Nullifies Green and Blue, isolating only the Red channel pure values.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Time Remap Loop (Custom Duration)",
+    "expression": "var dur = effect('Dur')('Slider'); var t = time % dur; t;",
+    "description": "Forces a pre-comp to loop every 2 seconds, regardless of its actual inner composition length.",
+    "targetProperty": "Time Remap"
+  },
+  {
+    "name": "Exponential Scale Speed",
+    "expression": "var multiplier = effect('Multiplier')('Slider'); [Math.pow(value[0], multiplier), Math.pow(value[1], multiplier)];",
+    "description": "Converts linear scale keyframes into violent, exponential warp-speed zooming.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Camera Shake (Explosion)",
+    "expression": "var decay = effect('Decay')('Slider'); var amp = effect('Amp')('Slider'); var freq = effect('Freq')('Slider'); var t = time - inPoint; if (t > 0 && t < 1) { var w = wiggle(freq, amp); var d = Math.exp(-decay * t); [value[0] + (w[0]-value[0])*d, value[1] + (w[1]-value[1])*d]; } else { value; }",
+    "description": "Generates a massive, violent earthquake shake at the layer's In Point that decays rapidly over 1 second.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Inertial Bounce Rotation",
+    "expression": "var amp = effect('Amp')('Slider'); var freq = effect('Freq')('Slider'); var decay = effect('Decay')('Slider'); var n = 0; if (numKeys > 0) { n = nearestKey(time).index; if (key(n).time > time) { n--; } } var t = 0; if (n == 0) { t = 0; } else { t = time - key(n).time; } if (n > 0 && t < 1) { var v = velocityAtTime(key(n).time - thisComp.frameDuration/10); value + v*amp*Math.sin(freq*t*2*Math.PI)/Math.exp(decay*t); } else { value; }",
+    "description": "The famous Inertial Bounce, but rigged explicitly for the Rotation property. Smooth decaying swings.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "LookAt 2D (Arrow pointing to Target)",
+    "expression": "var p1 = transform.position; var p2 = thisComp.layer(\"Target\").transform.position; var v = sub(p2, p1); Math.atan2(v[1], v[0]) * 180 / Math.PI;",
+    "description": "Apply to Rotation. Forces a 2D arrow or shape to independently rotate and always point at the 'Target' layer.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Auto-Fade Distance Camera",
+    "expression": "var cam = thisComp.activeCamera; if (cam) { var d = length(cam.toWorld([0,0,0]), toWorld(anchorPoint)); ease(d, 500, 1500, 100, 0); } else { value; }",
+    "description": "As a 3D layer moves further away from the camera, it automatically fades to 0% opacity like fog.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Maintain 3D Scale in Perspective",
+    "expression": "var cam = thisComp.activeCamera; if(cam) { var d = length(cam.toWorld([0,0,0]), toWorld(anchorPoint)); var zoom = cam.zoom; var ratio = d / zoom; [value[0]*ratio, value[1]*ratio, value[2]*ratio]; } else value;",
+    "description": "Forces a 3D layer to remain the exact same visual pixel size no matter how far away the camera gets.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Parallax Scrolling (Depth Z)",
+    "expression": "var depth = transform.position[2]; var camX = thisComp.activeCamera.transform.position[0]; var parallax = camX * (depth / 1000); [value[0] + parallax, value[1], value[2]];",
+    "description": "Alternative 2D-fake parallax. Moves elements horizontally based on a Z-depth slider value.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Audio React (Color Brightness)",
+    "expression": "var audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\"); var c = value; var mult = audio / 10; function clamp1(x) { return Math.min(Math.max(x, 0), 1); } [clamp1(c[0]+mult), clamp1(c[1]+mult), clamp1(c[2]+mult), 1];",
+    "description": "Links the brightness of a Fill Color to the beat of an Audio Amplitude layer.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Layer Delay Array (Position)",
+    "expression": "var delayFrames = effect('Delay Frames')('Slider'); var delay = framesToTime(delayFrames); thisComp.layer(\"Leader\").transform.position.valueAtTime(time - (index * delay));",
+    "description": "Every duplicated layer follows 'Leader' but lags behind by exactly 5 frames per index.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Auto-Orient Path (Without Rotation)",
+    "expression": "var p0 = transform.position.valueAtTime(time); var p1 = transform.position.valueAtTime(time + 0.01); var vec = sub(p1, p0); Math.atan2(vec[1], vec[0]) * 180 / Math.PI;",
+    "description": "Calculates the directional angle of a moving layer. Useful built-in orient replacement.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Progress Bar (Width Scaler)",
+    "expression": "var p = effect(\"Progress 0-100\")(\"Slider\"); [Math.min(Math.max(p, 0), 100), value[1]];",
+    "description": "Links the X Scale exclusively to a 0-100 progress slider.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Circle Sector Reveal (Radial Wipe Matrix)",
+    "expression": "var angle = effect(\"Angle\")(\"Slider\"); var total = effect('Total')('Slider'); (angle / total) * 100;",
+    "description": "Translates an angle slider (0-360) directly into a Radial Wipe completion percentage.",
+    "targetProperty": "Transition Completion"
+  },
+  {
+    "name": "Grid Arrangement (2D Matrix)",
+    "expression": "var cols = effect('Cols')('Slider'); var spacingX = effect('Spacing X')('Slider'); var spacingY = effect('Spacing Y')('Slider'); var ix = (index-1) % cols; var iy = Math.floor((index-1) / cols); [ix * spacingX, iy * spacingY];",
+    "description": "Automatically sorts hundreds of layers into a perfect 5-column grid layout.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Isolate Color Hue (HSL)",
+    "expression": "var c = value; var hsl = rgbToHsl(c); [hsl[0], 1, 0.5, 1];",
+    "description": "Strips saturation and lightness, locking the color to maximum vibrancy while keeping the animated Hue.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Random Color Every Frame",
+    "expression": "seedRandom(time, true); [random(), random(), random(), 1];",
+    "description": "Complete epilepsy strobe of entirely random RGB values 60 times a second.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Lock Position to Viewport",
+    "expression": "var cam = thisComp.activeCamera; if (cam) { var z = cam.zoom; cam.toWorld([thisComp.width/2, thisComp.height/2, z]); } else { value; }",
+    "description": "Forces a 3D layer to act like a 2D HUD element, always staying locked to the center of the camera screen.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Staircase Y-Stepping",
+    "expression": "var stepHeight = effect('Step Height')('Slider'); [value[0], value[1] + (index * stepHeight)];",
+    "description": "Drops each duplicated layer down by 50 pixels to create a staircase list.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Time Remap Ping-Pong",
+    "expression": "var durVar = source.duration; var t = time % (durVar * 2); if (t > durVar) { durVar - (t - durVar); } else { t; }",
+    "description": "Plays a video forward to the end, then smoothly reverses it backward, infinitely.",
+    "targetProperty": "Time Remap"
+  },
+  {
+    "name": "Stutter/Drop Frame Effect",
+    "expression": "var fps = effect('Fps')('Slider'); var f = Math.floor(time * fps); framesToTime(f);",
+    "description": "Apply to Time Remap. Skips frames, forcing a fluid 60fps video to play like an 8fps anime.",
+    "targetProperty": "Time Remap"
+  },
+  {
+    "name": "Distance Scale In",
+    "expression": "var tLayer = thisComp.layer(\"Target\"); var dist = length(transform.position, tLayer.transform.position); var maxDist = effect('Max Dist')('Slider'); var val = ease(dist, 0, maxDist, 100, 0); [val, val];",
+    "description": "Layer blows up to 100% scale when 'Target' gets close, and shrinks to 0% when far.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Sinusoidal Wiggle (Smooth Math)",
+    "expression": "var phase = index * 123; var freq = effect('Freq')('Slider'); var amp = effect('Amp')('Slider'); var x = Math.sin(time * freq + phase) * amp; var y = Math.cos(time * freq * 0.8 + phase) * amp; [value[0] + x, value[1] + y];",
+    "description": "A mathematically perfect, infinitely smooth figure-8 pseudo wiggle.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Random Seed By Name",
+    "expression": "var sum = effect('Sum')('Slider'); for(var i=0; i<thisLayer.name.length; i++) sum += thisLayer.name.charCodeAt(i); seedRandom(sum, true); random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));",
+    "description": "Generates a stable random number based on the letters in the layer's name, so copying the layer keeps the same value.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Glitch Offset (Blocky)",
+    "expression": "var intensity = effect(\"Glitch\")(\"Slider\"); var freq = effect('Freq')('Slider'); var t = Math.floor(time * freq); seedRandom(t, true); var ox = random(-intensity, intensity); [value[0] + ox, value[1]];",
+    "description": "Violent horizontal scan-line displacement jumps.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Maintain Volume Stretch (X)",
+    "expression": "var x = value[0]; var baseVol = 100 * 100; var y = baseVol / Math.max(x, 0.1); [x, y];",
+    "description": "Stretch X out? Y squashes down. Physics-accurate stretch.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Target Angle Restriction",
+    "expression": "var ang = value; var snap = effect('Snap')('Slider'); Math.round(ang / snap) * snap;",
+    "description": "Forces animated rotation to only resolve to the nearest 90-degree angle (Right Angles).",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Elastic Pull (Rubber Band)",
+    "expression": "var target = thisComp.layer(\"Target\").transform.position; var stretch = effect('Stretch')('Slider'); var p1 = value; [p1[0] + (target[0]-p1[0])*stretch, p1[1] + (target[1]-p1[1])*stretch];",
+    "description": "Layer stretches halfway towards the Target layer, reacting elastically as they pull apart.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Limit Speed Velocity",
+    "expression": "var currentV = speed; var maxSpeed = effect('Max Speed')('Slider'); if(currentV > maxSpeed) { value; } else { value; }",
+    "description": "Velocity clamp concept (simplified)",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Z-Depth Audio Visualizer",
+    "expression": "var audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\"); var mult = effect('Mult')('Slider'); [value[0], value[1], value[2] - (audio * mult)];",
+    "description": "Shoots the 3D layer towards the camera (Z-axis) on every bass kick.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Dynamic Shadow Length",
+    "expression": "var dist = length(transform.position, [thisComp.width/2, thisComp.height/2]); dist / 5;",
+    "description": "The further the layer moves from the center of the comp, the longer its shadow grows.",
+    "targetProperty": "Drop Shadow Distance"
+  },
+  {
+    "name": "Radial Text Array",
+    "expression": "var num = thisComp.numLayers; var r = 360 / num; r * index;",
+    "description": "Apply to Rotation. Instantly fans out duplicated layers into a perfect sunburst star.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Clamp Value to Comp Area",
+    "expression": "[clamp(value[0], 0, thisComp.width), clamp(value[1], 0, thisComp.height)];",
+    "description": "Safety lock. The layer can absolutely never leave the bounds of the screen.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Oscillating Opacity (Strobe)",
+    "expression": "var freq = effect(\"Strobe Hz\")(\"Slider\"); var a = Math.sin(time * freq * Math.PI * 2); a > 0 ? 100 : 0;",
+    "description": "An intense, perfectly rhythmic on/off strobe light effect governed by a Hz slider.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "3D LookAt Y-Axis Only",
+    "expression": "var p1 = toWorld(anchorPoint); var p2 = thisComp.layer(\"Target\").toWorld([0,0,0]); var vec = sub(p2, p1); var x = Math.atan2(vec[2], vec[0]) * 180/Math.PI; [0, -x + 90, 0];",
+    "description": "Billboarding: Rotates a 3D layer to face a target, but ONLY on the Y-axis (like a doom sprite facing the player).",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Parent Reverse Tracking (Stick to Comp)",
+    "expression": "var p = parent.transform.position; var s = parent.transform.scale; [value[0]-p[0], value[1]-p[1]] / (s[0]/100);",
+    "description": "A layer parented to something moving completely ignores its parent's movement and stays locally pinned.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Wiggle with Time Remap",
+    "expression": "var w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); w[0];",
+    "description": "Applies raw 1D wiggle data directly to a Time Remap property for scratchy, VHS-style time skipping.",
+    "targetProperty": "Time Remap"
+  },
+  {
+    "name": "Auto Z-Sort Based on Y Position",
+    "expression": "[value[0], value[1], value[1]];",
+    "description": "The legendary 2.5D trick. As a layer moves down vertically on the screen (Y), it automatically pops in front of layers behind it (Z).",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Loop In and Out (Offset)",
+    "expression": "loopIn(\"offset\") + loopOut(\"offset\") - value;",
+    "description": "Like a standard loop, but every time the animation repeats, it continues building from where it left off.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Trigger Animation At Marker",
+    "expression": "var n = 0; if (marker.numKeys > 0) { n = marker.nearestKey(time).index; if (marker.key(n).time > time) n--; } if (n > 0) { valueAtTime(time - marker.key(n).time); } else { valueAtTime(0); }",
+    "description": "Action triggers precisely when the playhead hits a layer marker, freezing before it.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Random Layer Color (Index)",
+    "expression": "seedRandom(index, true); [random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\")), random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\")), random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\")), 1];",
+    "description": "Assigns a completely random, permanent color to every duplicated layer instantly.",
+    "targetProperty": "Color"
+  },
+  {
+    "name": "Continuous Spinning Wheel",
+    "expression": "var rpm = effect(\"RPM\")(\"Slider\"); time * rpm * 6;",
+    "description": "Forget keyframes. Rotates the layer endlessly based entirely on an RPM (Revolutions per minute) slider.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Velocity to Opacity (Motion Blur Fake)",
+    "expression": "var s = speed; ease(s, 0, 1000, 100, 0);",
+    "description": "The faster the layer moves across the screen, the more transparent it becomes.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Align Text to Right (Anchor Point)",
+    "expression": "var r = sourceRectAtTime(); [r.left + r.width, r.top + r.height/2];",
+    "description": "Forces the anchor point to dynamically lock to the right edge of any typed text.",
+    "targetProperty": "Anchor Point"
+  },
+  {
+    "name": "Time-Based Flicker Cut",
+    "expression": "time % 0.1 < 0.05 ? 100 : 0;",
+    "description": "Harsh machinery strobe. On for 0.05 seconds, off for 0.05 seconds.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Invert X Rotation (Mirror)",
+    "expression": "value * -1;",
+    "description": "Extremely simple but wildly useful to mirror linked rotation on a clone/reflection layer.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Audio Bump Scale (Threshold)",
+    "expression": "var audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\"); var threshold = effect('Threshold')('Slider'); var bump = effect('Bump')('Slider'); if (audio > threshold) { [value[0]+bump, value[1]+bump]; } else { value; }",
+    "description": "Only triggers a massive scale jump if the audio bass exceeds a specific loudness threshold.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Maintain Position in Scaled Parent",
+    "expression": "var s = parent.transform.scale; [(value[0] / s[0]) * 100, (value[1] / s[1]) * 100];",
+    "description": "Counters a parent layer's scale, allowing this child layer to stay exactly where it is while the parent shrinks.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Typewriter Fade (Alphabetical)",
+    "expression": "var t = time - inPoint; var speed = effect('Speed')('Slider'); var f = t * speed; var c = text.sourceText; var result = \"\"; for (var i = 0; i < c.length; i++) { if (i < f) { result += c[i]; } else if (i < f + 1) { result += String.fromCharCode(Math.round(ease(f - i, 0, 1, 97, c.charCodeAt(i)))); } } result;",
+    "description": "Advanced typewriter that scrolls through alphabet characters before locking into the final letter.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Wiggle Path Offset",
+    "expression": "wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));",
+    "description": "Apply to the Offset property of Trim Paths to create a totally chaotic glitchy stroke ring.",
+    "targetProperty": "Trim Paths Offset"
+  },
+  {
+    "name": "Sine Wave Horizontal Position",
+    "expression": "var f = 1; var a = 200; [value[0] + Math.sin(time * f * Math.PI * 2) * a, value[1]];",
+    "description": "Pans the layer left and right endlessly in a perfect sine-wave loop.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Limit Text Length (Ellipsis)",
+    "expression": "var limit = effect('Limit')('Slider'); var txt = text.sourceText; if (txt.length > limit) { txt.substr(0, limit) + \"...\"; } else { txt; }",
+    "description": "Truncates long strings of text automatically and adds '...' if it exceeds 20 characters.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Distance from Center Opacity",
+    "expression": "var center = [thisComp.width/2, thisComp.height/2]; var d = length(transform.position, center); ease(d, 0, 800, 100, 0);",
+    "description": "Layer fades out completely as it moves further away from the center crosshair of the screen.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Step Time Remap (Posterize)",
+    "expression": "var fps = effect(\"Framerate\")(\"Slider\"); Math.floor(time * fps) / fps;",
+    "description": "Forces a 60fps video layer to skip frames depending on a framerate slider, simulating anime.",
+    "targetProperty": "Time Remap"
+  },
+  {
+    "name": "Z-Axis Wiggle Only",
+    "expression": "var w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); [value[0], value[1], w[2]];",
+    "description": "Wiggles a 3D layer strictly towards and away from the camera, keeping X and Y flat.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Audio Visualizer (Height Only)",
+    "expression": "var audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\"); var h = audio * 5; [value[0], value[1] + h];",
+    "description": "Perfect for shape layer equalizer bars. Links only the height multiplier to the beat.",
+    "targetProperty": "Size"
+  },
+  {
+    "name": "Basic Wiggle (Jiggle)",
+    "expression": "wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));",
+    "description": "Randomly changes the property's current value, 2 times every second, between ±30. Perfect for random, jiggly movement.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Time Multiplier (Continuous Motion)",
+    "expression": "value + time * effect('Time Multiplier')('Slider');",
+    "description": "Creates an automatic value by multiplying each passing second by 100. Perfect for continuous linear animation like rolling clouds.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Loop Out Cycle",
+    "expression": "loopOut(\"cycle\");",
+    "description": "Repeats all keyframed animation, after the last keyframe, for the duration of the comp. Perfect for creating animated loops.",
+    "targetProperty": "Any Property (Keyframed)"
+  },
+  {
+    "name": "Linear Interpolation Motion",
+    "expression": "linear(time, inPoint, outPoint, value, value + [100, 100]);",
+    "description": "Increase a layer's value over its duration between In and Out points. A quick and easy way to add smooth motion.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Inherit Parent + Offset",
+    "expression": "thisComp.layer(index - 1).transform.rotation + 20;",
+    "description": "Retrieve values from layers above and offset them. Rotates this layer 20 degrees more than the one directly above it.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Loop Out Offset",
+    "expression": "loopOut(\"offset\");",
+    "description": "Continually repeats a set of keyframes, accumulating the value changes for the duration of the comp. Great for infinite climbing.",
+    "targetProperty": "Any Property (Keyframed)"
+  },
+  {
+    "name": "Clamped Wiggle Limit",
+    "expression": "var w = wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider')); clamp(w, 0, 100);",
+    "description": "Ensures a value doesn't breach set amounts. The object wiggles randomly but cannot exceed 100 or drop below 0.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Static Random Number (Posterize Time)",
+    "expression": "posterizeTime(effect('Framerate')('Slider')); random(effect(\"Rand Max\")(\"Slider\"));",
+    "description": "Creates an arbitrary static random value between 0 and 100 that never changes over time.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Value Math Adjustments",
+    "expression": "value * effect('Multiplier')('Slider') + 10;",
+    "description": "A simple math block. Multiplies the current value by 1.5, then adds 10.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Show Composition Total Layers",
+    "expression": "thisComp.numLayers + \" Layers\";",
+    "description": "Automatically displays the exact amount of layers currently inside the composition.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Show Aspect Ratio Text",
+    "expression": "var gcd = function(a, b) { return (b == 0) ? a : gcd(b, a % b); }; var r = gcd(thisComp.width, thisComp.height); (thisComp.width/r) + \":\" + (thisComp.height/r);",
+    "description": "Calculates and generates the true aspect ratio of the composition (e.g., 16:9).",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Show Comp Resolution",
+    "expression": "thisComp.width + \" x \" + thisComp.height + \" px\";",
+    "description": "Displays the live width and height resolution of the active composition as a text HUD.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Show Comp Frame Rate",
+    "expression": "Math.round(1 / thisComp.frameDuration) + \" fps\";",
+    "description": "Displays the current frame rate (FPS) of the composition.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Show Composition Duration (Seconds)",
+    "expression": "thisComp.duration.toFixed(2) + \" sec\";",
+    "description": "Displays the total length of the composition timeline in seconds.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Distance Driven Blur",
+    "expression": "var target = thisComp.layer(\"Target\"); var d = length(transform.position, target.transform.position); d / 10;",
+    "description": "The further away this layer is from the 'Target' layer, the blurrier it becomes.",
+    "targetProperty": "Camera Lens Blur / Radius"
+  },
+  {
+    "name": "Layer Visibility by Day of Week",
+    "expression": "var d = new Date().getDay(); if(d == 1 || d == 3 || d == 5) { 100; } else { 0; }",
+    "description": "Shows the layer only on Monday, Wednesday, and Friday based on the real-world system clock.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Wiggle Intensity by Speed",
+    "expression": "var s = speed; var mult = s / 100; wiggle(5, 50 * mult);",
+    "description": "The faster the layer moves across the screen, the more violently it wiggles and shakes.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Expose Layer Speed Data",
+    "expression": "Math.round(speed) + \" px/s\";",
+    "description": "Displays the exact pixel-per-second velocity of the tracked layer as text.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Expose Layer Velocity Array",
+    "expression": "var v = velocity; \"X: \" + Math.round(v[0]) + \"\\nY: \" + Math.round(v[1]);",
+    "description": "Displays the active numerical vector velocity (X and Y speed independently) of the layer.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Digital Matrix Code Block",
+    "expression": "var cols = effect('Cols')('Slider'); var rows = effect('Rows')('Slider'); var str = \"\"; for(var i=0; i<rows; i++) { for(var j=0; j<cols; j++){ str += Math.round(random(effect(\"Rand Max\")(\"Slider\"))); } str += \"\\n\"; } str;",
+    "description": "Generates a massive block of randomized binary code (0s and 1s) fitting for sci-fi HUDs.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Auto-Flip Vertically (Reflection)",
+    "expression": "var center = thisComp.height/2; transform.position[1] > center ? [-value[0], value[1]] : value;",
+    "description": "Automatically flips the layer upside down instantly whenever it crosses the vertical center of the screen.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Auto-Flip Horizontally (Mirror)",
+    "expression": "var center = thisComp.width/2; transform.position[0] > center ? [value[0], -value[1]] : value;",
+    "description": "Automatically mirrors the layer instantly depending on which half of the screen it occupies.",
+    "targetProperty": "Scale"
+  },
+  {
+    "name": "Dynamic Number Counter Linear",
+    "expression": "var startVal = effect('Start Val')('Slider'); var endVal = effect('End Val')('Slider'); var tStart = inPoint; var tEnd = outPoint; Math.round(linear(time, tStart, tEnd, startVal, endVal));",
+    "description": "Smoothly counts numbers up from 0 to 1000 between the In and Out points of the layer without keyframes.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Word Counter Text Analyzer",
+    "expression": "var txt = text.sourceText; var words = txt.split(/\\s+/); var count = effect('Count')('Slider'); for(var i=0; i<words.length; i++) { if(words[i].length > 0) count++; } count + \" words\";",
+    "description": "Reads its own source text and automatically counts how many words you typed.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Character Counter Text Analyzer",
+    "expression": "var txt = text.sourceText; txt.length + \" chars\";",
+    "description": "Reads its own source text and automatically counts how many individual characters currently exist.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Character Counter No Spaces",
+    "expression": "var txt = text.sourceText; var noSp = txt.replace(/\\s+/g, \"\"); noSp.length + \" letters\";",
+    "description": "Counts the exact number of characters in the text, completely ignoring spaces or newlines.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Replace Spaces with Line Breaks",
+    "expression": "var txt = text.sourceText; txt.replace(/ /g, \"\\r\");",
+    "description": "Takes a normal sentence and forces every single word onto its own vertical line.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Split Text Content by Separator",
+    "expression": "var txt = text.sourceText; var parts = txt.split(\"-\"); parts.length > 0 ? parts[0] : txt;",
+    "description": "Reads 'Title - Subtitle' and strictly isolates just the text before the hyphen.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Letter-by-Letter Typewriter",
+    "expression": "var txt = \"Hello World!\"; var rate = effect('Rate')('Slider'); var visible = Math.min(Math.floor((time-inPoint)*rate), txt.length); txt.substring(0, visible);",
+    "description": "Writes out pre-defined text cleanly letter-by-letter based on the playhead time.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Word-by-Word Reveal",
+    "expression": "var txt = text.sourceText; var words = txt.split(\" \"); var rate = effect('Rate')('Slider'); var visible = Math.min(Math.floor((time-inPoint)*rate), words.length); var out = \"\"; for (var i=0; i<visible; i++) { out += words[i] + \" \"; } out;",
+    "description": "Reveals text a full word at a time, instead of just letter-by-letter.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Display Internal System Date",
+    "expression": "var d = new Date(); d.toDateString();",
+    "description": "Pulls the computer's actual system date and displays it cleanly (e.g., Wed Sep 10 2025).",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Automatic In/Out Opacity Fade",
+    "expression": "var dur = effect('Dur')('Slider'); var inF = linear(time, inPoint, inPoint+dur, 0, 100); var outF = linear(time, outPoint-dur, outPoint, 100, 0); Math.min(inF, outF);",
+    "description": "Auto-fades the layer in over 0.5s at the start, and fades it out 0.5s before it ends.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Null Connect Laser Beam",
+    "expression": "var p = thisComp.layer(\"Target Null\").transform.position; fromComp(p);",
+    "description": "Add to the 'End Point' of a Beam effect. Always keeps the laser beam locked exactly to a target null object.",
+    "targetProperty": "Beam End Point"
+  },
+  {
+    "name": "Sine Wave Alpha Strobe",
+    "expression": "var freq = effect('Freq')('Slider'); Math.abs(Math.sin(time * Math.PI * 2 * freq)) * 100;",
+    "description": "Pulses opacity back and forth between 0 and 100 in rhythmic waves using absolute sine logic.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Snap Rotation to 45 degree Limits",
+    "expression": "Math.round(value / effect('Divisor')('Slider')) * 45;",
+    "description": "Locks any rotation animation to jump strictly in 45-degree increments. Excellent for dial UIs.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Opacity Spike by Audio Treble",
+    "expression": "var audio = thisComp.layer(\"Audio Amplitude\").effect(\"Both Channels\")(\"Slider\"); if(audio > 10) { 100; } else { 20; }",
+    "description": "Turns the layer on full brightness only when the music beats above a certain threshold, otherwise dim.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Random Fixed Seed By Index",
+    "expression": "seedRandom(index, true); random(effect(\"Rand Min\")(\"Slider\"), effect(\"Rand Max\")(\"Slider\"));",
+    "description": "Generates a stable, permanent random number for this property strictly based on layer order.",
+    "targetProperty": "Any Property (Manual)"
+  },
+  {
+    "name": "Classic Wiggle X, Y, Z (3D Space)",
+    "expression": "wiggle(effect('Wiggle Freq')('Slider'), effect('Wiggle Amp')('Slider'));",
+    "description": "Applies severe chaotic 3-dimensional wiggling in all directions for 3D nulls or objects.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Constant Linear Rotation RPM",
+    "expression": "var rpm = effect('Rpm')('Slider'); time * (rpm * 360 / 60);",
+    "description": "Forget rotation speed calculations. Generates perfect 360-degree spins exactly 30 times a minute.",
+    "targetProperty": "Rotation"
+  },
+  {
+    "name": "Dynamic Shadow Length by Velocity",
+    "expression": "var s = speed; s / 5;",
+    "description": "The faster the layer moves, the longer its drop shadow grows to simulate motion blur.",
+    "targetProperty": "Drop Shadow Distance"
+  },
+  {
+    "name": "Wiggle Amplitude tied to Opacity",
+    "expression": "var o = transform.opacity; var mult = o / 100; wiggle(5, 100 * mult);",
+    "description": "Layer only shakes when it is visible. As it fades out, the wiggle calms down.",
+    "targetProperty": "Position"
+  },
+  {
+    "name": "Cursor Highlight Follower",
+    "expression": "var target = thisComp.layer(\"Mouse Cursor\"); var d = length(transform.position, target.transform.position); if (d < 150) { 100; } else { 30; }",
+    "description": "Highlights this icon/layer to 100% opacity when the 'Mouse Cursor' layer gets within 150px proximity.",
+    "targetProperty": "Opacity"
+  },
+  {
+    "name": "Auto Typewriter Write Off",
+    "expression": "var speed = effect('Speed')('Slider'); var t = outPoint - time; var val = text.sourceText.substr(0, t * speed); val;",
+    "description": "Instantly deletes the text letter-by-letter in reverse right before the layer's Out Point happens.",
+    "targetProperty": "Source Text"
+  },
+  {
+    "name": "Rotation - Point Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar myPos = thisLayer.toWorld(thisLayer.anchorPoint);\nvar emitterPos = emitter.toWorld(emitter.anchorPoint);\nvar delta = emitterPos - myPos;\nradiansToDegrees(Math.atan2(delta[1], delta[0]));",
+    "description": "Rotates a layer to always face a Point Light emitter layer. Layer 'Emitter' must exist in the comp.",
+    "targetProperty": "Rotation",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Rotation - Directional Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar destination = thisComp.layer(\"Destination\");\nvar delta = destination.position - emitter.position;\nradiansToDegrees(Math.atan2(delta[1], delta[0]));",
+    "description": "Rotates a layer to match the direction from an Emitter to a Destination layer. Both layers must exist in the comp.",
+    "targetProperty": "Rotation",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Bevel & Emboss Angle - Point Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar myPos = thisLayer.toWorld(thisLayer.anchorPoint);\nvar emitterPos = emitter.toWorld(emitter.anchorPoint);\nvar delta = emitterPos - myPos;\nradiansToDegrees(Math.atan2(-delta[1], delta[0]));",
+    "description": "Drives the Bevel & Emboss Light Angle layer style to match a Point Light emitter. Layer 'Emitter' must exist.",
+    "targetProperty": "Bevel & Emboss - Light Angle",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Bevel & Emboss Angle - Directional Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar destination = thisComp.layer(\"Destination\");\nvar delta = emitter.position - destination.position;\nradiansToDegrees(Math.atan2(-delta[1], delta[0]));",
+    "description": "Drives the Bevel & Emboss Light Angle layer style from an Emitter-to-Destination direction. Both layers must exist.",
+    "targetProperty": "Bevel & Emboss - Light Angle",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Drop Shadow Direction - Point Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar myPos = thisLayer.toWorld(thisLayer.anchorPoint);\nvar emitterPos = emitter.toWorld(emitter.anchorPoint);\nvar delta = myPos - emitterPos;\nradiansToDegrees(Math.atan2(delta[1], delta[0])) + 90;",
+    "description": "Drives the Drop Shadow Direction layer style so the shadow always falls opposite to a Point Light emitter.",
+    "targetProperty": "Drop Shadow - Direction",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Drop Shadow Direction - Directional Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar destination = thisComp.layer(\"Destination\");\nvar delta = destination.position - emitter.position;\nradiansToDegrees(Math.atan2(delta[1], delta[0])) + 90;",
+    "description": "Drives the Drop Shadow Direction layer style from an Emitter-to-Destination directional light. Both layers must exist.",
+    "targetProperty": "Drop Shadow - Direction",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Position Offset - Point Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar shape = thisComp.layer(\"Shape A\");\nvar distance = effect(\"Slider Control\")(\"Slider\");\nvar delta = shape.position - emitter.position;\nvar angle = Math.atan2(delta[1], delta[0]);\nshape.position + [Math.cos(angle) * distance, Math.sin(angle) * distance];",
+    "description": "Offsets 'Shape A' away from the Emitter along the light direction. Requires a Slider Control effect on this layer for distance.",
+    "targetProperty": "Position",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Position Offset - Directional Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar destination = thisComp.layer(\"Destination\");\nvar shape = thisComp.layer(\"Shape A\");\nvar distance = effect(\"Position Offset\")(\"Slider\");\nvar delta = destination.position - emitter.position;\nvar angle = Math.atan2(delta[1], delta[0]);\nshape.position + [Math.cos(angle) * distance, Math.sin(angle) * distance];",
+    "description": "Offsets 'Shape A' along a directional light beam from Emitter to Destination. Requires a 'Position Offset' Slider Control effect.",
+    "targetProperty": "Position",
+    "group": "Lights & Shadows"
+  },
+  {
+    "name": "Radial Blur Center - Directional Light",
+    "expression": "var emitter = thisComp.layer(\"Emitter\");\nvar destination = thisComp.layer(\"Destination\");\nvar positionOffset = effect(\"Position Offset\")(\"Slider\");\nvar lightDistance = effect(\"Light Distance\")(\"Slider\");\nvar delta = destination.position - emitter.position;\nvar angle = Math.atan2(delta[1], delta[0]);\nvar lightPos = emitter.position + [Math.cos(angle) * lightDistance, Math.sin(angle) * lightDistance];\nthisLayer.fromWorld(lightPos);",
+    "description": "Sets the Radial Blur center to a virtual light source projected along the Emitter-to-Destination direction. Requires 'Position Offset' and 'Light Distance' Slider Controls. See tutorial file for setup.",
+    "targetProperty": "Radial Blur - Center",
+    "group": "Lights & Shadows"
+  }
+]
